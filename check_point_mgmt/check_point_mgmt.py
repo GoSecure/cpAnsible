@@ -5,7 +5,7 @@ import sys
 
 from ansible.module_utils.basic import AnsibleModule
 
-from cpapi import APIClient, APIClientArgs
+from cp_mgmt_api_python_sdk.lib import APIClient, APIClientArgs
 
 # arguments for the module:
 fields = {
@@ -157,6 +157,13 @@ def main():
             "fingerprint": client.fingerprint
         }
         resp = session_data
+    elif command == "get_fingerprint":
+        management = parameters.get("management", "127.0.0.1")
+        port = parameters.get("port", 443)
+        client_args = APIClientArgs(server=management, port=port)
+        client = APIClient(client_args)
+        fingerprint = client.get_server_fingerprint()
+        module.exit_json(hash=fingerprint)
     else:
         # Parsing the session-data argument:
         try:
